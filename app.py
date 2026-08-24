@@ -29,7 +29,7 @@ from physics import (
 )
 from tank_svg import build_tank_svg
 
-st.set_page_config(page_title="Simulacion de Tanque Conico - Daniel Giraldo", page_icon="🌀", layout="wide")
+st.set_page_config(page_title="Simulacion de Tanque Conico - Daniel Giraldo y Allison Correa", page_icon="🌀", layout="wide")
 
 # Valores por defecto = condiciones reales del tanque fisico construido para
 # el trabajo (H=20 cm, R=5 cm, radio de orificio 0.2 cm -> d0=0.4 cm).
@@ -387,7 +387,7 @@ def main() -> None:
     with col_icon:
         st.markdown("### 🌀")
     with col_title:
-        st.markdown('<p class="app-title">Simulacion de Tanque Conico &mdash; Daniel Giraldo</p>', unsafe_allow_html=True)
+        st.markdown('<p class="app-title">Simulacion de Tanque Conico &mdash; Daniel Giraldo y Allison Correa</p>', unsafe_allow_html=True)
         st.markdown('<p class="app-subtitle">Simulacion animada del vaciado por orificio inferior</p>', unsafe_allow_html=True)
 
     params, errors = render_sidebar()

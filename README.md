@@ -1,4 +1,4 @@
-# Simulación de Tanque Cónico — Daniel Giraldo (Streamlit)
+# Simulación de Tanque Cónico — Daniel Giraldo y Allison Correa (Streamlit)
 
 Aplicación web interactiva que simula mediante una animación el vaciado de
 un tanque cónico por un orificio inferior. Corresponde al **punto 5** del
