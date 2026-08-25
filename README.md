@@ -26,10 +26,6 @@ permita simular mediante una animación el vaciado del tanque."
   tiempo transcurrido (`h(t)` y `t`), junto con el tiempo de vaciado
   estimado y el porcentaje de agua restante.
 - Gráfica de altura vs. tiempo (analítica) junto al panel de configuración.
-- Sección de validación experimental: hasta seis mediciones reales
-  (altura inicial + tiempo cronometrado), con cálculo automático del
-  tiempo analítico correspondiente, error relativo, y una gráfica
-  comparando ambas series (analítico vs. experimental).
 - Aplicación desplegada y accesible mediante un enlace público.
 
 Los valores por defecto de los parámetros corresponden a las condiciones
@@ -95,3 +91,17 @@ runtime.txt                   # version de Python fijada para el despliegue
 2. "New app" → seleccionar este repositorio, branch `main`, archivo
    principal `app.py`.
 3. Deploy.
+
+## Editar el proyecto desde Google Colab
+
+[`tanque_conico_colab.ipynb`](tanque_conico_colab.ipynb) trae el mismo
+código organizado en celdas (`%%writefile` por archivo) para poder abrirlo
+directamente en Colab, editar cualquier archivo ahí mismo con la IA de
+Colab (Gemini) y subir los cambios a este repositorio sin salir del
+navegador:
+
+**Abrir en Colab:** https://colab.research.google.com/github/danielgiraldo81/tanque-conico-streamlit/blob/main/tanque_conico_colab.ipynb
+
+El notebook incluye al final una celda para hacer `git push` directo (pide
+tu token de GitHub de forma oculta, no queda guardado) y una alternativa
+para descargar un `.zip` si prefieres subirlo tú mismo.

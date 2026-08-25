@@ -47,15 +47,6 @@ PARAM_LIMITS = {
     "g": dict(min_value=1.0, max_value=25.0, step=0.01, format="%.2f"),
 }
 
-EXPERIMENTAL_ROWS = [
-    "Tanque lleno",
-    "Altura inicial 1",
-    "Altura inicial 2",
-    "Altura inicial 3",
-    "Altura inicial 4",
-    "Altura inicial 5",
-]
-
 
 def load_css() -> None:
     st.markdown(
@@ -108,16 +99,6 @@ def init_state() -> None:
     st.session_state.setdefault("t_accum", 0.0)
     st.session_state.setdefault("t_start_perf", None)
     st.session_state.setdefault("speed", 1.0)
-    st.session_state.setdefault(
-        "experimental",
-        pd.DataFrame(
-            {
-                "Medicion": EXPERIMENTAL_ROWS,
-                "h0 (m)": [DEFAULT_PARAMS["H"], 0.0, 0.0, 0.0, 0.0, 0.0],
-                "t experimental (s)": [None] * 6,
-            }
-        ),
-    )
 
 
 def reset_simulation() -> None:
@@ -313,72 +294,6 @@ def render_tank_animation(params: TankParams, is_valid: bool) -> None:
         st.error("Corrige los parametros en el panel lateral para poder simular.")
 
 
-def render_experimental(params: TankParams, k: float, is_valid: bool) -> None:
-    st.markdown("###### VALIDACION EXPERIMENTAL")
-    st.markdown("**Analitico vs. experimental**")
-    st.caption(
-        "Ingresa hasta seis mediciones reales del tanque (altura inicial y tiempo de vaciado "
-        "cronometrado). Se calcula el tiempo analitico para esa misma altura con los parametros "
-        "actuales del panel lateral y se comparan ambos."
-    )
-
-    edited = st.data_editor(
-        st.session_state.experimental,
-        num_rows="fixed",
-        disabled=["Medicion"],
-        hide_index=True,
-        key="experimental_editor",
-        column_config={
-            "h0 (m)": st.column_config.NumberColumn(min_value=0.0, step=0.001, format="%.3f"),
-            "t experimental (s)": st.column_config.NumberColumn(min_value=0.0, step=0.1, format="%.2f"),
-        },
-    )
-    st.session_state.experimental = edited
-
-    if not is_valid:
-        st.warning("Corrige los parametros del tanque para calcular los tiempos analiticos.")
-        return
-
-    rows = []
-    for _, row in edited.iterrows():
-        h0_row = row["h0 (m)"] or 0.0
-        t_exp = row["t experimental (s)"]
-        t_ana = analytical_drain_time(h0_row, k) if h0_row > 0 else 0.0
-        error_pct = None
-        if t_exp not in (None, 0) and t_ana not in (0, float("inf")):
-            error_pct = abs(t_ana - t_exp) / t_exp * 100
-        rows.append(
-            {
-                "Medicion": row["Medicion"],
-                "h0 (m)": h0_row,
-                "T analitico (s)": round(t_ana, 2) if h0_row > 0 else None,
-                "t experimental (s)": t_exp,
-                "Error relativo (%)": round(error_pct, 2) if error_pct is not None else None,
-            }
-        )
-
-    results = pd.DataFrame(rows)
-    col_table, col_chart = st.columns([1, 1], gap="large")
-
-    with col_table:
-        st.dataframe(results, hide_index=True, use_container_width=True)
-
-    with col_chart:
-        valid_rows = results[(results["h0 (m)"] > 0) & results["t experimental (s)"].notna()]
-        if len(valid_rows) >= 1:
-            chart_df = valid_rows[["h0 (m)", "T analitico (s)", "t experimental (s)"]].sort_values("h0 (m)")
-            st.line_chart(
-                chart_df,
-                x="h0 (m)",
-                y=["T analitico (s)", "t experimental (s)"],
-                height=260,
-                color=["#f59e0b", "#38bdf8"],
-            )
-            st.caption("Eje X: altura inicial h0 (m). Naranja = analitico, azul = experimental.")
-        else:
-            st.caption("Ingresa al menos un tiempo experimental para ver la comparacion graficada.")
-
-
 def main() -> None:
     load_css()
     init_state()
@@ -398,10 +313,6 @@ def main() -> None:
         render_tank_animation(params, is_valid=is_valid)
     with right:
         render_config_panel(params, is_valid=is_valid)
-
-    st.markdown("---")
-    k = drain_constant(params) if is_valid else 0.0
-    render_experimental(params, k, is_valid)
 
     st.markdown(
         '<p style="text-align:center;color:#5c5449;font-size:12px;margin-top:24px;">'
